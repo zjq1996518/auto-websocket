@@ -99,6 +99,6 @@ socket.onopen = () => {
 
 访问自己的页面，加上参数 user_id = test123
 
-![image](https://github.com/zjq1996518/auto-websocket/blob/master/9%5D0_4I(P3X%608(J)L~G%60P5G5.png)
+![image](https://github.com/zjq1996518/auto-websocket/blob/master/1.jpg)
 
-![image]([https://github.com/zjq1996518/auto-websocket/blob/master/FW8%60KE%24E5S%24N9T2OTT%7B906V.png)
+![image](https://github.com/zjq1996518/auto-websocket/blob/master/2.jpg)
