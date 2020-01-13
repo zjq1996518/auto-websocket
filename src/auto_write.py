@@ -52,7 +52,7 @@ class AutoWrite(object):
         # code += ' '*12 + f"if data['{uid_name}'] == ADMIN_ID:\n"
         code += ' '*12 + f"notify_user = socket_dict['{func_name}'].get(data['{notify_id_name}'])\n"
         code += ' '*12 + 'if notify_user is not None:\n'
-        code += ' '*16 + f"notify_user.send(data['{message_name}'])\n"
+        code += ' '*16 + f"notify_user.send(f\"{{data['{uid_name}']}}: {{data['{message_name}']}}\")\n"
         code += ' '*16 + f"ws.send('{success_message}')\n"
         code += ' '*12 + 'else:\n'
         code += ' '*16 + f"ws.send('{fail_message}')\n"
