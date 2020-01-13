@@ -49,13 +49,13 @@ class AutoWrite(object):
         code += ' '*8 + 'data = ws.receive()\n'
         code += ' '*8 + 'if not ws.closed:\n'
         code += ' '*12 + 'data = json.loads(data)\n'
-        code += ' '*12 + f"if data['{uid_name}'] == ADMIN_ID:\n"
-        code += ' '*16 + f"notify_user = socket_dict['{func_name}'].get(data['{notify_id_name}'])\n"
-        code += ' '*16 + 'if notify_user is not None:\n'
-        code += ' '*20 + f"notify_user.send(data['{message_name}'])\n"
-        code += ' '*20 + f"ws.send('{success_message}')\n"
-        code += ' '*16 + 'else:\n'
-        code += ' '*20 + f"ws.send('{fail_message}')\n"
+        # code += ' '*12 + f"if data['{uid_name}'] == ADMIN_ID:\n"
+        code += ' '*12 + f"notify_user = socket_dict['{func_name}'].get(data['{notify_id_name}'])\n"
+        code += ' '*12 + 'if notify_user is not None:\n'
+        code += ' '*16 + f"notify_user.send(data['{message_name}'])\n"
+        code += ' '*16 + f"ws.send('{success_message}')\n"
+        code += ' '*12 + 'else:\n'
+        code += ' '*16 + f"ws.send('{fail_message}')\n"
         code += ' '*4 + f"del socket_dict['{func_name}'][{uid_name}]\n"
         with open(self.code_file_path, 'a+', encoding='utf-8') as f:
             f.write(code)
