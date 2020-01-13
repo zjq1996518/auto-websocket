@@ -5,7 +5,7 @@ from flask_sockets import Sockets
 
 app = Flask(__name__)
 socket = Sockets(app)
-ADMIN_ID = 'zjq123'
+ADMIN_ID = 'test123'
 socket_dict = {'test1': {}, 'test2': {}}
 
 

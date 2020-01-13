@@ -1,5 +1,5 @@
 # 管理员uid 用于通知信息
-ADMIN_NAME = 'zjq123'
+ADMIN_NAME = 'test123'
 
 # 服务端口
 PORT = 5000

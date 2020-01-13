@@ -6,7 +6,7 @@
 ## 参数说明如下
 ```
 # 管理员uid 用于通知信息
-ADMIN_NAME = 'zjq123'
+ADMIN_NAME = 'test123'
 
 # 服务端口
 PORT = 5000
@@ -53,12 +53,30 @@ WEBSOCKET_LIST = [
 
 # 前端如下
 ```
+<script type="text/javascript">
+
+function getUrlKey(key) {
+    let url = location.href;
+    let params = url.split('?')[1];
+
+    if (!params) {
+        return undefined;
+    }
+
+    let startIndex = params.search(`${name}/ig`);
+    let endIndex = params.substring(startIndex).search(/[&]/ig);
+    endIndex = endIndex === -1 ? params.length : endIndex;
+    return params.substring(startIndex, endIndex).split('=')[1]
+
+}
+
+
 const socket = new WebSocket('ws://localhost:5000/ttt');
 // 这里的admin_name 与 配置文件中保持一致ADMIN_NAME 
-const admin_name = 'test123'
+const admin_name = 'test123';
 
 // 获取url参数
-let userId = this.getUrlKey('user_id');
+let userId = getUrlKey('user_id');
 
 socket.onopen = () => {
 
@@ -66,11 +84,16 @@ socket.onopen = () => {
     socket.send(userId);
 
     if (userId === admin_name) {
-    // 这里的user_id设置为管理员id，notify_id设置为要通知的用户，message为通知信息
-    socket.send(JSON.stringify({'user_id': userId, 'notify_id': '1', 'message': '管理员通知你的订单好了'}));}
+        // 这里的user_id设置为管理员id，notify_id设置为要通知的用户，message为通知信息，变量名与配置文件中保持一致
+        socket.send(JSON.stringify({'user_id': userId, 'notify_id': '1', 'message': '管理员通知你一些消息'}));}
 
     };
     socket.onmessage = (ev) => {
         alert(ev.data)
     }
+</script>
 ```
+
+# 效果
+访问自己的页面，加上参数 user_id = 1
+访问自己的页面，加上参数 user_id = test123
