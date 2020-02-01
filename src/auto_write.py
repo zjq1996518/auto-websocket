@@ -10,11 +10,10 @@ class AutoWrite(object):
 
         import_package = 'import json\n' \
                          'from flask import Flask\n' \
-                         'from flask_sockets import Sockets\n' \
-                         'from flask_cors import *\n'
+                         'from flask_sockets import Sockets\n' 
+               
 
         create_app = '\n\napp = Flask(__name__)\n' \
-                     'CORS(app, supports_credentials=True)\n' \
                      'socket = Sockets(app)\n'
 
         set_admin_id = f"ADMIN_ID = '{admin_uid}'\n"
@@ -64,6 +63,7 @@ class AutoWrite(object):
         code += ' '*20 + 'if notify_user is not None:\n'
         code += ' '*24 + f"notify_user.send(f\"{{data['{uid_name}']}}: {{data['{message_name}']}}\")\n"
         code += ' '*24 + f"ws.send('{success_message}')\n"
+        code += ' '*20 + 'else:\n'
         code += ' '*24 + f"ws.send('{fail_message}')\n"
 
         code += ' '*12 + 'else:\n'

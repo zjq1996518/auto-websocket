@@ -5,7 +5,6 @@ from src.config import *
 
 auto_write = AutoWrite(ADMIN_NAME, WEBSOCKET_LIST)
 
-
 if __name__ == '__main__':
     from src.websocket import app
     server = pywsgi.WSGIServer(('0.0.0.0', PORT), app, handler_class=WebSocketHandler)
