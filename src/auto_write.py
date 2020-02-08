@@ -10,8 +10,8 @@ class AutoWrite(object):
 
         import_package = 'import json\n' \
                          'from flask import Flask\n' \
-                         'from flask_sockets import Sockets\n' 
-               
+                         'from flask_sockets import Sockets\n' \
+                         'from geventwebsocket import WebSocketError\n'
 
         create_app = '\n\napp = Flask(__name__)\n' \
                      'socket = Sockets(app)\n'
@@ -51,28 +51,31 @@ class AutoWrite(object):
         code += ' '*4 + 'if not ws.closed:\n'
         code += ' '*8 + f'{uid_name} = ws.receive()\n'
         code += ' '*8 + f"socket_dict['{func_name}'][{uid_name}] = ws\n"
-        code += ' '*8 + f"print(f\"{{socket_dict['{func_name}']}}\")\n"
+        # code += ' '*8 + f"print(f\"{{socket_dict['{func_name}']}}\")\n"
         code += ' '*4 + 'while not ws.closed:\n'
-        code += ' '*8 + 'data = ws.receive()\n'
-        code += ' '*8 + 'if not ws.closed:\n'
-        code += ' '*12 + 'data = json.loads(data)\n'
+        code += ' '*8 + 'try:\n'
+        code += ' '*12 + 'data = ws.receive()\n'
+        code += ' '*12 + 'if not ws.closed:\n'
+        code += ' '*16 + 'data = json.loads(data)\n'
 
-        code += ' '*12 + f"if isinstance(data['{notify_id_name}'], list):\n"
-        code += ' '*16 + f"for notify_id in data['{notify_id_name}']:\n"
-        code += ' '*20 + f"notify_user = socket_dict['{func_name}'].get({notify_id_name})\n"
+        code += ' '*16 + f"if isinstance(data['{notify_id_name}'], list):\n"
+        code += ' '*20 + f"for notify_id in data['{notify_id_name}']:\n"
+        code += ' '*24 + f"notify_user = socket_dict['{func_name}'].get({notify_id_name})\n"
+        code += ' '*24 + 'if notify_user is not None:\n'
+        code += ' '*28 + f"notify_user.send(f\"{{data['{uid_name}']}}: {{data['{message_name}']}}\")\n"
+        code += ' '*28 + f"ws.send('{success_message}')\n"
+        code += ' '*24 + 'else:\n'
+        code += ' '*28 + f"ws.send('{fail_message}')\n"
+
+        code += ' '*16 + 'else:\n'
+        code += ' '*20 + f"notify_user = socket_dict['{func_name}'].get(data['{notify_id_name}'])\n"
         code += ' '*20 + 'if notify_user is not None:\n'
         code += ' '*24 + f"notify_user.send(f\"{{data['{uid_name}']}}: {{data['{message_name}']}}\")\n"
         code += ' '*24 + f"ws.send('{success_message}')\n"
         code += ' '*20 + 'else:\n'
         code += ' '*24 + f"ws.send('{fail_message}')\n"
-
-        code += ' '*12 + 'else:\n'
-        code += ' '*16 + f"notify_user = socket_dict['{func_name}'].get(data['{notify_id_name}'])\n"
-        code += ' '*16 + 'if notify_user is not None:\n'
-        code += ' '*20 + f"notify_user.send(f\"{{data['{uid_name}']}}: {{data['{message_name}']}}\")\n"
-        code += ' '*20 + f"ws.send('{success_message}')\n"
-        code += ' '*16 + 'else:\n'
-        code += ' '*20 + f"ws.send('{fail_message}')\n"
+        code += ' '*8 + f"except WebSocketError:\n"
+        code += ' '*12 + f"ws.send('{fail_message}')\n"
         code += ' '*4 + f"del socket_dict['{func_name}'][{uid_name}]\n"
         with open(self.code_file_path, 'a+', encoding='utf-8') as f:
             f.write(code)
