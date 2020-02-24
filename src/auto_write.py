@@ -11,7 +11,8 @@ class AutoWrite(object):
         import_package = 'import json\n' \
                          'from flask import Flask\n' \
                          'from flask_sockets import Sockets\n' \
-                         'from geventwebsocket import WebSocketError\n'
+                         'from geventwebsocket import WebSocketError\n' \
+                         'from src.logger import get_logger'
 
         create_app = '\n\napp = Flask(__name__)\n' \
                      'socket = Sockets(app)\n'
@@ -47,14 +48,16 @@ class AutoWrite(object):
         code = '\n'*2
         code += f"@socket.route('{route_path}')\n"
         code += f'def {func_name}(ws):\n'
+        code += ' '*4 + 'logger = get_logger()\n'
         code += ' '*4 + f"{uid_name} = ''\n"
         code += ' '*4 + 'if not ws.closed:\n'
         code += ' '*8 + f'{uid_name} = ws.receive()\n'
         code += ' '*8 + f"socket_dict['{func_name}'][{uid_name}] = ws\n"
-        # code += ' '*8 + f"print(f\"{{socket_dict['{func_name}']}}\")\n"
+        code += ' '*8 + f"logger.info(socket_dict['{func_name}'])\n"
         code += ' '*4 + 'while not ws.closed:\n'
         code += ' '*8 + 'try:\n'
         code += ' '*12 + 'data = ws.receive()\n'
+        code += ' '*12 + "logger.info(f'用户{user_id}消息接收成功')\n"
         code += ' '*12 + 'if not ws.closed:\n'
         code += ' '*16 + 'data = json.loads(data)\n'
 
@@ -74,7 +77,8 @@ class AutoWrite(object):
         code += ' '*24 + f"ws.send('{success_message}')\n"
         code += ' '*20 + 'else:\n'
         code += ' '*24 + f"ws.send('{fail_message}')\n"
-        code += ' '*8 + f"except WebSocketError:\n"
+        code += ' '*8 + f"except WebSocketError as e:\n"
+        code += ' '*12 + f"ws.send(logger.error(e))\n"
         code += ' '*12 + f"ws.send('{fail_message}')\n"
         code += ' '*4 + f"del socket_dict['{func_name}'][{uid_name}]\n"
         with open(self.code_file_path, 'a+', encoding='utf-8') as f:
