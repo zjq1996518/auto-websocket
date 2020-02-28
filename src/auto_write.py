@@ -8,11 +8,9 @@ class AutoWrite(object):
 
         self._repeat_check(websocket_list)
 
-        import_package = 'import json\n' \
-                         'from flask import Flask\n' \
+        import_package = 'from flask import Flask\n' \
                          'from flask_sockets import Sockets\n' \
-                         'from geventwebsocket import WebSocketError\n' \
-                         'from src.logger import get_logger'
+                         'from .base import handle'
 
         create_app = '\n\napp = Flask(__name__)\n' \
                      'socket = Sockets(app)\n'
@@ -30,57 +28,20 @@ class AutoWrite(object):
             f.write(set_socket_dict)
 
         # 创建websocket
-        for websocket in websocket_list:
-            self.write_func(**websocket)
+        for idx, websocket in enumerate(websocket_list):
+            self.write_func(idx=idx, **websocket)
 
-    def write_func(self, route_path, func_name, uid_name='user_id', notify_id_name='notify_id',
-                   message_name='message', success_message='success', fail_message='fail'):
+    def write_func(self, route_path, func_name, idx, **args):
         """
+        :param idx: 配置文件索引
         :param route_path: 路由
         :param func_name: 函数名
-        :param uid_name: 全局id名字
-        :param notify_id_name: 通知的id参数名
-        :param message_name: 消息名字
-        :param success_message: 通知成功消息
-        :param fail_message: 通知失败消息
         :return:
         """
         code = '\n'*2
         code += f"@socket.route('{route_path}')\n"
         code += f'def {func_name}(ws):\n'
-        code += ' '*4 + 'logger = get_logger()\n'
-        code += ' '*4 + f"{uid_name} = ''\n"
-        code += ' '*4 + 'if not ws.closed:\n'
-        code += ' '*8 + f'{uid_name} = ws.receive()\n'
-        code += ' '*8 + f"socket_dict['{func_name}'][{uid_name}] = ws\n"
-        code += ' '*8 + f"logger.info(socket_dict['{func_name}'])\n"
-        code += ' '*4 + 'while not ws.closed:\n'
-        code += ' '*8 + 'try:\n'
-        code += ' '*12 + 'data = ws.receive()\n'
-        code += ' '*12 + "logger.info(f'用户{user_id}消息接收成功')\n"
-        code += ' '*12 + 'if not ws.closed:\n'
-        code += ' '*16 + 'data = json.loads(data)\n'
-
-        code += ' '*16 + f"if isinstance(data['{notify_id_name}'], list):\n"
-        code += ' '*20 + f"for notify_id in data['{notify_id_name}']:\n"
-        code += ' '*24 + f"notify_user = socket_dict['{func_name}'].get({notify_id_name})\n"
-        code += ' '*24 + 'if notify_user is not None:\n'
-        code += ' '*28 + f"notify_user.send(f\"{{data['{uid_name}']}}: {{data['{message_name}']}}\")\n"
-        code += ' '*28 + f"ws.send('{success_message}')\n"
-        code += ' '*24 + 'else:\n'
-        code += ' '*28 + f"ws.send('{fail_message}')\n"
-
-        code += ' '*16 + 'else:\n'
-        code += ' '*20 + f"notify_user = socket_dict['{func_name}'].get(data['{notify_id_name}'])\n"
-        code += ' '*20 + 'if notify_user is not None:\n'
-        code += ' '*24 + f"notify_user.send(f\"{{data['{uid_name}']}}: {{data['{message_name}']}}\")\n"
-        code += ' '*24 + f"ws.send('{success_message}')\n"
-        code += ' '*20 + 'else:\n'
-        code += ' '*24 + f"ws.send('{fail_message}')\n"
-        code += ' '*8 + f"except WebSocketError as e:\n"
-        code += ' '*12 + f"ws.send(logger.error(e))\n"
-        code += ' '*12 + f"ws.send('{fail_message}')\n"
-        code += ' '*4 + f"del socket_dict['{func_name}'][{uid_name}]\n"
+        code += ' '*4 + f'handle(ws, {idx}, socket_dict)\n'
         with open(self.code_file_path, 'a+', encoding='utf-8') as f:
             f.write(code)
 
