@@ -35,7 +35,7 @@ def send_msg(ws, socket_dict, websocket_config):
             for notify_id in data[notify_id_name]:
                 notify_user = socket_dict[path].get(notify_id)
                 if notify_user is not None and not notify_user.closed:
-                    notify_user.send(f'{data[notify_id_name]}: {data[message_name]}')
+                    notify_user.send(f'{data[uid_name]}: {data[message_name]}')
                     ws.send(success_message)
                 else:
                     ws.send(fail_message)
