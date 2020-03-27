@@ -2,7 +2,11 @@
 ADMIN_NAME = 'test123'
 
 # 服务端口
-PORT = 5000
+PORT = 50001
+
+SSL_CRT_PATH = ''
+
+SSL_KEY_PATH = ''
 
 # 创建websocket服务的字典表
 WEBSOCKET_LIST = [
