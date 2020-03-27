@@ -2,7 +2,7 @@
 ADMIN_NAME = 'test123'
 
 # 服务端口
-PORT = 50001
+PORT = 5000
 
 SSL_CRT_PATH = ''
 
