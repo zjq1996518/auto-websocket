@@ -15,6 +15,6 @@ if __name__ == '__main__':
             'crtfile': SSL_CRT_PATH
         }
 
-    server = WSGIServer(('0.0.0.0', PORT), app, handler_class=WebSocketHandler, **ssl_parm)
+    server = WSGIServer(('0.0.0.0', PORT), app, handler_class=WebSocketHandler, **ssl_parm )
     print("服务已启动")
     server.serve_forever()
