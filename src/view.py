@@ -31,6 +31,8 @@ def pay_success(module_name):
 
         origin_sign = data['sign']
         origin_sign = base64.b64decode(origin_sign)
+        del data['sign']
+        del data['sign_type']
 
         public_key = rsa.PublicKey.load_pkcs1_openssl_pem(PUBLIC_KEY.encode())
         rsa.verify(get_sign(data).encode(), origin_sign, public_key)

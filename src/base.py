@@ -15,6 +15,9 @@ def save_ws(ws, func_name, logger, socket_dict):
 
         socket_dict[func_name][user_id] = ws
         logger.info(socket_dict[func_name])
+        user_list = list(socket_dict[func_name].keys())
+        user_online = {'在线': user_list}
+        ws.send(json.dumps(user_online))
 
     return user_id
 
