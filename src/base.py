@@ -68,4 +68,4 @@ def handle(ws, config_index, socket_dict):
 
     save = socket_dict[websocket_config['func_name']][user_id]
     if save.closed:
-        del socket_dict[websocket_config['route_path']][user_id]
+        del socket_dict[websocket_config['func_name']][user_id]
