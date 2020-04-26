@@ -16,9 +16,12 @@ def save_ws(ws, func_name, logger, socket_dict):
         socket_dict[func_name][user_id] = ws
         logger.info(socket_dict[func_name])
         user_list = list(socket_dict[func_name].keys())
-        user_online = {'在线': user_list}
+        for index, value in enumerate(user_list):
+            if (value == user_id):
+                del user_list[index]
+        user_online = {'zaixian': user_list}
         ws.send(json.dumps(user_online))
-
+        
     return user_id
 
 

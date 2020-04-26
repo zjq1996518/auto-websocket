@@ -38,7 +38,7 @@ def pay_success(module_name):
         rsa.verify(get_sign(data).encode(), origin_sign, public_key)
 
         websocket_id = data['out_trade_no'].split('_')[1]
-        socket_dict['test2'][websocket_id].send('支付成功')
+        socket_dict['test2'][websocket_id].send('收到支付宝付款')
 
         return 'success'
 
@@ -66,7 +66,7 @@ def pay_success(module_name):
         root = ET.fromstring(xml_data)
 
         websocket_id = root.find('attach').text
-        socket_dict['test2'][websocket_id].send('支付成功')
+        socket_dict['test2'][websocket_id].send('收到微信支付')
 
         return xml_str
 
